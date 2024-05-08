@@ -19,3 +19,5 @@ def search_item(request):
 
     # 정렬된 결과를 컨텍스트에 추가하여 템플릿으로 전달합니다.
     return render(request, 'index.html', {'query': query, 'results': results, 'sort': sort})
+
+

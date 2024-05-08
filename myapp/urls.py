@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from .models import MarketItem
+from django.urls import path
+from . import views
 
 def search_item(request):
     query = request.GET.get('q', '')
@@ -13,3 +15,8 @@ def search_item(request):
             results = MarketItem.objects.filter(a_name__icontains=query).order_by('-a_price')
 
     return render(request, 'index.html', {'query': query, 'results': results, 'sort': sort})
+
+
+urlpatterns = [
+    path('', views.search_item, name='search_item'),
+]

@@ -15,3 +15,17 @@ class MarketItem(models.Model):
     p_year_month = models.CharField(max_length=10)
     a_seq = models.IntegerField()
     m_seq = models.IntegerField()
+
+
+
+
+class News(models.Model):
+    n_seq = models.IntegerField(unique=True)
+    n_title = models.CharField(max_length=200)
+    reg_date = models.DateTimeField()
+    n_view_count = models.IntegerField()
+    file_path = models.URLField(blank=True, null=True)
+    n_contents = models.TextField()
+
+    def __str__(self):
+        return self.n_title

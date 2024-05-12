@@ -5,105 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>농산물을 더 싸게</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 20px;
-        }
-        h1 {
-            color: #333;
-        }
-        form {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        input[type="text"], select {
-            padding: 10px;
-            margin-right: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            flex: 1;
-            max-width: 300px;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            padding: 0;
-            margin-top: 20px;
-        }
-        .card {
-            list-style: none;
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        .card h3 {
-            margin-top: 15px;
-            color: #333;
-            cursor: pointer;
-        }
-        .card p {
-            margin-top: 5px;
-            color: #666;
-        }
-        .card .price {
-            margin-top: 10px;
-            font-weight: bold;
-            color: #007BFF;
-        }
-        .keyword-box {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            padding-top: 10px;
-        }
-        .keyword-btn {
-            margin: 5px;
-            padding: 10px 15px;
-            background-color: #e9ecef;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s;
-            font-size: 16px;
-            color: #007bff;
-        }
-        .keyword-btn:hover {
-            background-color: #d1d9e2;
-            transform: translateY(-2px);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        .recommendation-title {
-            text-align: center;
-            margin-top: 30px;
-            margin-bottom: 10px;
-            font-size: 20px;
-            color: #333;
-        }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; }
+        h1 { color: #333; }
+        form { display: flex; justify-content: center; margin-bottom: 20px; }
+        input[type="text"], select { padding: 10px; margin-right: 10px; border: 1px solid #ccc; border-radius: 5px; flex: 1; max-width: 300px; }
+        button { padding: 10px 20px; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; padding: 0; margin-top: 20px; }
+        .card { list-style: none; background-color: white; padding: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: transform 0.2s; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .card h3 { margin-top: 15px; color: #333; cursor: pointer; }
+        .card p { margin-top: 5px; color: #666; }
+        .card .price { margin-top: 10px; font-weight: bold; color: #007BFF; }
+        .expand-content { display: none; margin-top: 10px; }
+        .news-list { margin-top: 10px; }
+        .news-list .card { margin: 20px; }
+        .toggle-button { cursor: pointer; color: white; text-decoration: none; text-decoration: none; }
+        .recommendation-title { text-align: center; margin-top: 30px; margin-bottom: 10px; font-size: 20px; color: #333; }
+        .keyword-box { display: flex; flex-wrap: wrap; justify-content: center; padding-top: 10px; }
+        .keyword-btn { margin: 5px; padding: 10px 15px; background-color: #e9ecef; border: none; border-radius: 15px; cursor: pointer; transition: background-color 0.3s ease, transform 0.2s; font-size: 16px; color: #007bff; }
+        .keyword-btn:hover { background-color: #d1d9e2; transform: translateY(-2px); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
-    <h1>농산물을 더 싸게!</h1>
+    <h1>농산물을 더 싸게 구매하자!</h1>
     <form action="{% url 'search_item' %}" method="get">
         <input type="text" name="q" placeholder="농산물 찾기" value="{{ query }}">
         <select name="sort">
@@ -114,7 +39,11 @@
     </form>
 
     <p class="recommendation-title">추천검색어</p>
-    <div class="keyword-box"></div>
+    <div class="keyword-box">
+        {% for keyword in keywordData %}
+        <div class="keyword-btn" onclick="location.href='{% url 'search_item' %}?q={{ keyword.a_name|urlencode }}'">{{ keyword.a_name }}</div>
+        {% endfor %}
+    </div>
 
     <div class="grid-container">
         {% for item in results %}
@@ -127,11 +56,26 @@
         {% endfor %}
     </div>
 
+    <h2>뉴스 목록</h2>
+    <div class="news-list">
+        {% for news in news_list %}
+        <div class="card"> 
+            <h3>{{ news.n_title }}</h3> <br> <p>조회수: {{ news.n_view_count }}</p>
+            <button class="toggle-button" onclick="toggleContent(this)">내용 펼치기</button>
+            <div class="expand-content">
+                <p>{{ news.n_contents|linebreaksbr }}</p>
+                {% if news.file_path %}
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
     <script>
         // JSON 데이터 예시
         const keywordData = [
             {"a_name": "사과 1개"},
-            {"a_name": "배(신고) 1개"},
+            {"a_name": "토마토 1kg"},
             {"a_name": "단감 1개(200g)"},
             {"a_name": "오렌지 1개"},
             {"a_name": "참외 1개"},
@@ -155,6 +99,16 @@
             };
             keywordBox.appendChild(btn);
         });
+        function toggleContent(element) {
+            var content = element.nextElementSibling;
+            if (content.style.display === 'block') {
+                content.style.display = 'none';
+                element.textContent = '내용 펼치기';
+            } else {
+                content.style.display = 'block';
+                element.textContent = '내용 접기';
+            }
+        }
     </script>
 </body>
 </html>

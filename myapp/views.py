@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from .models import MarketItem
+from .models import MarketItem, News
+import json
 
 def search_item(request):
     query = request.GET.get('q', '')
@@ -7,17 +8,21 @@ def search_item(request):
     results = []
 
     if query:
-        # 사용자가 선택한 정렬 방식에 따라 쿼리셋을 정렬합니다.
-        # 가격이 0원이 아닌 상품만 필터링합니다.
         if sort == 'asc':
-            results = MarketItem.objects.filter(a_name__icontains=query, a_price__gt=0).order_by('a_price')
+            results = MarketItem.objects.filter(a_name__icontains=query).order_by('a_price')
         elif sort == 'desc':
-            results = MarketItem.objects.filter(a_name__icontains=query, a_price__gt=0).order_by('-a_price')
-        # 정렬 방식이 명시되지 않은 경우 기본적으로 가격이 0원이 아닌 상품만 표시합니다.
+            results = MarketItem.objects.filter(a_name__icontains=query).order_by('-a_price')
         else:
-            results = MarketItem.objects.filter(a_name__icontains=query, a_price__gt=0)
+            results = MarketItem.objects.filter(a_name__icontains=query)
 
-    # 정렬된 결과를 컨텍스트에 추가하여 템플릿으로 전달합니다.
-    return render(request, 'index.html', {'query': query, 'results': results, 'sort': sort})
+    # Info.json 데이터 로드
+    with open('/Users/choitim/Desktop/seoul_data/info.json', 'r') as file:
+        news_data = json.load(file)
+        news_list = news_data['DATA']
 
-
+    return render(request, 'index.html', {
+        'query': query,
+        'results': results,
+        'sort': sort,
+        'news_list': news_list
+    })

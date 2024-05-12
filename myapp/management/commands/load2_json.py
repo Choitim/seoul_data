@@ -9,7 +9,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # JSON 파일의 경로를 정확하게 지정해주세요.
-        path_to_json = '/Users/choitim/Desktop/seoul_data/info.json'
+        path_to_json = 'info.json'
         with open(path_to_json, 'r', encoding='utf-8') as file:
             data = json.load(file)
             news_entries = data['DATA']

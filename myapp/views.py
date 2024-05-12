@@ -16,7 +16,7 @@ def search_item(request):
             results = MarketItem.objects.filter(a_name__icontains=query)
 
     # Info.json 데이터 로드
-    with open('/Users/choitim/Desktop/seoul_data/info.json', 'r') as file:
+    with open('info.json', 'r') as file:
         news_data = json.load(file)
         news_list = news_data['DATA']
 
